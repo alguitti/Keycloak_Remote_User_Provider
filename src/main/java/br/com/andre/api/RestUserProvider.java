@@ -85,7 +85,36 @@ public class RestUserProvider implements UserStorageProvider,UserLookupProvider,
 		return getUserByUsername(realm, username); 
 	}
 	
-	//adapter
+	@Override
+    public Stream<UserModel> searchForUserStream(RealmModel realm, String search) {
+        return client.getAll().stream().map(legacy -> adaptToModel(legacy, realm));
+    }
+	
+	@Override
+	public Stream<UserModel> searchForUserStream(RealmModel realm, String search, Integer firstResult,
+			Integer maxResults) {
+		return searchForUserStream(realm, search);
+	}
+
+	@Override
+	public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String, String> params, Integer firstResult,
+			Integer maxResults) {
+		return client.getAll().stream().map(legacy -> adaptToModel(legacy, realm));
+	}
+
+	@Override
+	public Stream<UserModel> getGroupMembersStream(RealmModel realm, GroupModel group, Integer firstResult,
+			Integer maxResults) {
+		return Stream.empty();
+	}
+
+	@Override
+	public Stream<UserModel> searchForUserByUserAttributeStream(RealmModel realm, String attrName, String attrValue) {
+		return Stream.empty();
+	}
+	
+	
+	
 	private UserModel adaptToModel(LegacyUser user, RealmModel realm) {
 		
 		return new AbstractUserAdapter(session, realm, model) {
@@ -116,34 +145,6 @@ public class RestUserProvider implements UserStorageProvider,UserLookupProvider,
 			}
 		};
 		
-	}
-
-	@Override
-    public Stream<UserModel> searchForUserStream(RealmModel realm, String search) {
-        return client.getAll().stream().map(legacy -> adaptToModel(legacy, realm));
-    }
-	
-	@Override
-	public Stream<UserModel> searchForUserStream(RealmModel realm, String search, Integer firstResult,
-			Integer maxResults) {
-		return searchForUserStream(realm, search);
-	}
-
-	@Override
-	public Stream<UserModel> searchForUserStream(RealmModel realm, Map<String, String> params, Integer firstResult,
-			Integer maxResults) {
-		return client.getAll().stream().map(legacy -> adaptToModel(legacy, realm));
-	}
-
-	@Override
-	public Stream<UserModel> getGroupMembersStream(RealmModel realm, GroupModel group, Integer firstResult,
-			Integer maxResults) {
-		return Stream.empty();
-	}
-
-	@Override
-	public Stream<UserModel> searchForUserByUserAttributeStream(RealmModel realm, String attrName, String attrValue) {
-		return Stream.empty();
 	}
 
 }
